@@ -1,18 +1,19 @@
 import fs from "node:fs/promises";
 import { artifactPaths } from "./artifact.ts";
-import type { BiliInfo } from "../providers/bilibili/metadata.ts";
+import type { BiliInfo, BiliPage } from "../providers/bilibili/metadata.ts";
 
-export async function writeNfo(info: BiliInfo, outputDir: string) {
+export async function writeNfo(info: BiliInfo, outputDir: string, page?: BiliPage, includePageInName = false) {
   await fs.mkdir(outputDir, { recursive: true });
-  const paths = artifactPaths(outputDir, info.title, info.bvid);
-  await fs.writeFile(paths.nfo, toNfo(info), "utf8");
+  const paths = artifactPaths(outputDir, info.title, info.bvid, page, includePageInName);
+  await fs.writeFile(paths.nfo, toNfo(info, page), "utf8");
   return paths.nfo;
 }
 
-function toNfo(info: BiliInfo) {
+function toNfo(info: BiliInfo, page?: BiliPage) {
+  const title = page && info.pages.length > 1 ? `${info.title} - ${page.part || `P${page.page}`}` : info.title;
   return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <movie>
-  <title>${xml(info.title)}</title>
+  <title>${xml(title)}</title>
   <originaltitle>${xml(info.title)}</originaltitle>
   <plot>${xml(info.desc)}</plot>
   <runtime>${Math.round(info.duration / 60)}</runtime>

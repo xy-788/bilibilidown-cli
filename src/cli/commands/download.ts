@@ -3,7 +3,7 @@ import type { ArtifactKind } from "../../core/artifact.ts";
 
 const ALLOWED = new Set(["video", "cover", "nfo", "subtitle", "danmaku"]);
 
-export async function downloadCommand(input: string, outputDir: string, withValue = "video,cover,nfo", quality = "127") {
+export async function downloadCommand(input: string, outputDir: string, withValue = "video,cover,nfo", quality = "127", page = "1", allPages = false, subtitleLang?: string) {
   const requested = withValue
     .split(",")
     .map((item) => item.trim())
@@ -15,5 +15,10 @@ export async function downloadCommand(input: string, outputDir: string, withValu
     }
   }
 
-  return download(input, outputDir, requested as ArtifactKind[], Number(quality));
+  return download(input, outputDir, requested as ArtifactKind[], {
+    quality: Number(quality),
+    pageSelector: page,
+    allPages,
+    subtitleLang
+  });
 }

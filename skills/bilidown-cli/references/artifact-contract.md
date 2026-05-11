@@ -32,3 +32,30 @@ Failures should return:
 ```
 
 Agents should report returned paths, not guessed paths.
+
+For multi-part downloads, `artifacts` is `null` at the top level and each selected page has its own artifact map:
+
+```json
+{
+  "status": "ok",
+  "pageSelector": "all",
+  "totalPages": 3,
+  "selectedPages": 3,
+  "artifacts": null,
+  "pages": [
+    {
+      "page": 1,
+      "cid": 123,
+      "part": "P1 title",
+      "artifacts": {
+        "video": "/out/title P01 P1 title.mp4",
+        "cover": "/out/title P01 P1 title.jpg",
+        "nfo": "/out/title P01 P1 title.nfo",
+        "subtitle": "/out/title P01 P1 title.srt",
+        "danmaku": "/out/title P01 P1 title.xml"
+      },
+      "warnings": []
+    }
+  ]
+}
+```

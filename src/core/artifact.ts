@@ -15,9 +15,12 @@ export function emptyArtifacts(): ArtifactMap {
   };
 }
 
-export function artifactPaths(outputDir: string, title: string, bvid: string) {
+export function artifactPaths(outputDir: string, title: string, bvid: string, page?: { page: number; part?: string }, includePageInName = false) {
   const absoluteOutputDir = path.resolve(outputDir);
-  const base = artifactBaseName(title, bvid);
+  const pageLabel = includePageInName && page
+    ? ` P${String(page.page).padStart(2, "0")}${page.part ? ` ${page.part}` : ""}`
+    : "";
+  const base = artifactBaseName(`${title}${pageLabel}`, bvid);
   return {
     video: path.join(absoluteOutputDir, `${base}.mp4`),
     cover: path.join(absoluteOutputDir, `${base}.jpg`),

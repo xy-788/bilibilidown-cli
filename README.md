@@ -12,6 +12,10 @@
 - 下载视频封面
 - 生成媒体库常用的 `.nfo` 元数据文件
 - 下载 B 站 DASH 音视频流并用 `ffmpeg` 合并
+- 下载多 P 视频，可以选择单 P、全部分 P，或指定范围
+- 下载弹幕 XML
+- 下载 B 站字幕并转换成 SRT
+- 读取文本文件里的多个 URL，做轻量批量下载
 - 通过扫码登录 B 站账号，以便请求登录后可访问的更高画质
 - 用稳定的 `--json` 输出告诉 agent：成功了什么、生成了哪些文件、失败时下一步该怎么办
 - 随项目内置 `SKILL.md`，让 agent 安装后知道怎么安全地调用它
@@ -28,14 +32,15 @@
 - 封面下载：`bdown cover`
 - NFO 生成：`bdown nfo`
 - 单视频下载：`bdown download`
+- 多 P 选择：`--page all`、`--page 1,3-5`
+- 字幕和弹幕：`--with subtitle,danmaku`
+- 批量 URL：`bdown batch urls.txt`
 - 内置 agent Skill：`skills/bilidown-cli/SKILL.md`
 
 后续计划再补：
 
-- 多 P 视频
 - 合集/收藏夹
-- 字幕和弹幕格式转换
-- 批量 URL
+- ASS 弹幕转换
 - 断点续传
 - 任务队列
 - 更完整的媒体库目录结构
@@ -89,6 +94,26 @@ bdown nfo BVxxxx -o ./out --json
 bdown download BVxxxx -o ./out --with video,cover,nfo --quality 127 --json
 ```
 
+下载全部分 P：
+
+```bash
+bdown download BVxxxx -o ./out --with video,cover,nfo,subtitle,danmaku --page all --quality 127 --json
+```
+
+只下载指定分 P：
+
+```bash
+bdown download BVxxxx -o ./out --with cover,nfo,danmaku --page 1,3-5 --json
+```
+
+批量下载文本文件里的多个链接：
+
+```bash
+bdown batch urls.txt -o ./out --with video,cover,nfo --page 1 --json
+```
+
+`urls.txt` 一行一个 BV 号或 B 站链接，空行和 `#` 开头的注释行会被跳过。
+
 ## 登录 B 站账号
 
 如果视频需要登录，或者你想请求更高画质，可以用扫码登录：
@@ -141,6 +166,7 @@ skills/bilidown-cli/references/
 - 为什么先跑 `doctor`
 - 为什么下载前先跑 `info`
 - 下载后怎么汇报 artifact 清单
+- 多 P 下载时怎么读取 `pages` 产物清单
 - 遇到 `AUTH_REQUIRED` 怎么处理
 - 为什么不能自动读取浏览器 cookie
 

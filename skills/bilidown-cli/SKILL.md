@@ -13,13 +13,15 @@ Use this skill for agent-run Bilibili archival workflows.
 2. Run `bdown info <url-or-bv> --json` before downloading, and confirm the title, uploader, `bvid`, and page count.
 3. Choose an explicit output directory before creating files.
 4. If login is needed for higher quality, run `bdown auth login --json`, have the user scan or open `loginUrl`, then poll with `bdown auth poll <qrcodeKey> --json`.
-5. Download with a clear artifact list:
+5. For multi-part videos, choose `--page all`, `--page 1`, or a selector like `--page 1,3-5`.
+6. Download with a clear artifact list:
 
 ```powershell
-bdown download <url-or-bv> -o <output-dir> --with video,cover,nfo --quality 127 --json
+bdown download <url-or-bv> -o <output-dir> --with video,cover,nfo,subtitle,danmaku --page all --quality 127 --json
 ```
 
-6. Report the artifact paths returned by JSON. Do not infer success from chat text alone.
+7. Report the artifact paths returned by JSON. For multi-part downloads, read `pages[].artifacts`.
+8. Do not infer success from chat text alone.
 
 ## Common Commands
 
@@ -32,7 +34,10 @@ bdown auth poll <qrcodeKey> --json
 bdown info <BV-or-url> --json
 bdown cover <BV-or-url> -o <output-dir> --json
 bdown nfo <BV-or-url> -o <output-dir> --json
-bdown download <BV-or-url> -o <output-dir> --with video,cover,nfo --quality 127 --json
+bdown download <BV-or-url> -o <output-dir> --with video,cover,nfo --page 1 --quality 127 --json
+bdown download <BV-or-url> -o <output-dir> --with video,cover,nfo,subtitle,danmaku --page all --quality 127 --json
+bdown download <BV-or-url> -o <output-dir> --with cover,nfo,danmaku --page 1,3-5 --json
+bdown batch urls.txt -o <output-dir> --with video,cover,nfo --page 1 --json
 ```
 
 ## Cookie Safety

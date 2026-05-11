@@ -9,6 +9,7 @@ import { nfoCommand } from "./commands/nfo.ts";
 import { downloadCommand } from "./commands/download.ts";
 import { authCommand } from "./commands/auth.ts";
 import { batchCommand } from "./commands/batch.ts";
+import type { ArtifactKind } from "../core/artifact.ts";
 
 async function main() {
   const args = parseArgs();
@@ -29,14 +30,21 @@ async function dispatch(args: ReturnType<typeof parseArgs>) {
   const out = flagValue(args.flags, ["o", "output"], ".");
   const withValue = flagValue(args.flags, ["with"], "video,cover,nfo");
   const quality = flagValue(args.flags, ["quality", "qn"], "127");
+  const page = flagValue(args.flags, ["page", "p"], "1");
+  const subtitleLang = flagValue(args.flags, ["subtitle-lang"], undefined);
 
   if (args.command === "doctor") return doctorCommand();
   if (args.command === "auth") return authCommand(process.argv.slice(3));
   if (args.command === "info") return infoCommand(requireInput(args.positionals[0]));
   if (args.command === "cover") return coverCommand(requireInput(args.positionals[0]), out);
   if (args.command === "nfo") return nfoCommand(requireInput(args.positionals[0]), out);
-  if (args.command === "download") return downloadCommand(requireInput(args.positionals[0]), out, withValue, quality);
-  if (args.command === "batch") return batchCommand();
+  if (args.command === "download") return downloadCommand(requireInput(args.positionals[0]), out, withValue, quality, page, args.flags.has("all-pages"), subtitleLang);
+  if (args.command === "batch") return batchCommand(requireInput(args.positionals[0]), out, parseWith(withValue), {
+    quality: Number(quality),
+    pageSelector: page,
+    allPages: args.flags.has("all-pages"),
+    subtitleLang
+  });
   if (args.command === "help" || args.command === "--help" || args.command === "-h") return helpText();
 
   return {
@@ -56,7 +64,7 @@ function requireInput(input?: string) {
 
 function helpText() {
   return [
-    "bilidown-cli",
+    "bilibilidown-cli",
     "",
     "Commands:",
     "  bdown doctor [--json]",
@@ -69,8 +77,23 @@ function helpText() {
     "  bdown info <url-or-bv> [--json]",
     "  bdown cover <url-or-bv> -o <dir> [--json]",
     "  bdown nfo <url-or-bv> -o <dir> [--json]",
-    "  bdown download <url-or-bv> -o <dir> --with video,cover,nfo --quality 127 [--json]"
+    "  bdown download <url-or-bv> -o <dir> --with video,cover,nfo,subtitle,danmaku --page all --quality 127 [--json]",
+    "  bdown batch urls.txt -o <dir> --with video,cover,nfo --page 1 [--json]"
   ].join("\n");
 }
 
 main();
+
+function parseWith(withValue: string): ArtifactKind[] {
+  const allowed = new Set(["video", "cover", "nfo", "subtitle", "danmaku"]);
+  const requested = withValue
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean);
+  for (const item of requested) {
+    if (!allowed.has(item)) {
+      throw new Error(`Unknown artifact type: ${item}`);
+    }
+  }
+  return requested as ArtifactKind[];
+}

@@ -1,7 +1,9 @@
 node_modules/
 dist/
 .npm-cache/
+.research/
 .env
 .bdown/
 out/
+out-*/
 *.log
