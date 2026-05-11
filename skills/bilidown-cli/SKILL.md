@@ -1,6 +1,6 @@
 ---
 name: bilidown-cli
-description: Use bilidown-cli/bdown to archive Bilibili videos with stable JSON output and verifiable artifacts such as video, cover, NFO, subtitles, and danmaku. Trigger when the user asks to download or archive Bilibili media, generate Bilidown-style metadata, or turn a BV/video URL into local media files.
+description: Use bilidown-cli/bdown to download and archive Bilibili videos with stable JSON output and verifiable artifacts such as video, cover, NFO, subtitles, and danmaku. Trigger when the user asks to download or archive Bilibili media, generate media-library metadata, or turn a BV/video URL into local media files.
 ---
 
 # bilidown-cli

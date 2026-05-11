@@ -42,7 +42,7 @@ export async function download(input: string, outputDir: string, requested: Arti
   if (requested.includes("video")) {
     const ffmpeg = await findFfmpeg();
     if (!ffmpeg) {
-      throw new BdownError("FFMPEG_NOT_FOUND", "ffmpeg was not found.", "Install ffmpeg, set FFMPEG_PATH, use Docker, or place ffmpeg under vendor/ffmpeg. Bilidown GUI is not required.");
+      throw new BdownError("FFMPEG_NOT_FOUND", "ffmpeg was not found.", "Install ffmpeg, set FFMPEG_PATH, use Docker, or place ffmpeg under vendor/ffmpeg.");
     }
 
     const playUrl = await getPlayUrl(info.bvid, info.cid, quality);

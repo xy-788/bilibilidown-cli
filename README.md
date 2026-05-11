@@ -1,8 +1,10 @@
 # bilibilidown-cli
 
-`bilibilidown-cli` 是一个给 AI agent 使用的 B 站媒体归档命令行工具。
+`bilibilidown-cli` 是一个面向 AI agent 的 B 站下载与媒体归档 CLI。
 
-它的命令名是 `bdown`。目标不是做一个新的图形下载器，而是给 Codex、Claude Code、Cursor 这类 agent 一个稳定、可验证、可自动化调用的 B 站下载能力。
+它的命令名是 `bdown`。这个项目的核心目标不是做一个图形界面下载器，而是给 Codex、Claude Code、Cursor 这类 agent 一个稳定、可验证、可自动化调用的 B 站下载能力。
+
+换句话说，它是一个新的 agent-first CLI + Skill 项目：人负责提出目标，agent 负责调用命令、检查结果、汇报产物。
 
 ## 它适合做什么
 
@@ -14,7 +16,7 @@
 - 用稳定的 `--json` 输出告诉 agent：成功了什么、生成了哪些文件、失败时下一步该怎么办
 - 随项目内置 `SKILL.md`，让 agent 安装后知道怎么安全地调用它
 
-简单说：它是一个“面向 agent 的 B 站归档工具”，而不是一个临时下载脚本。
+简单说：它是一个“给 agent 用的 B 站下载器”，不是一个临时下载脚本。
 
 ## 现在做到哪一步了
 
@@ -113,8 +115,6 @@ bdown auth poll <qrcodeKey> --json
 
 ## 关于 ffmpeg
 
-`bilibilidown-cli` 不依赖 Bilidown GUI。
-
 下载视频时，B 站通常返回分离的音频流和视频流，所以需要通用的 `ffmpeg` 来合并。工具会按下面顺序查找：
 
 1. `FFMPEG_PATH`
@@ -172,15 +172,15 @@ npm publish
 
 ## 项目定位
 
-这个项目的长期目标是：
+这个项目的长期目标是做成一个正式的、面向 agent 生态的 B 站下载工具：
 
 ```text
-用 lark-cli 的工程规范做骨架，
-用 opencli 的 adapter 思路做网站层，
-用 Bilidown 的产品体验做验收标准。
+CLI 负责稳定执行，
+Skill 负责告诉 agent 怎么调用，
+JSON 输出负责让结果可验证。
 ```
 
-先把“agent 可用、输出稳定、产物可验证”做好，再逐步追平更完整的下载器体验。
+先把“agent 可用、输出稳定、产物可验证”做好，再逐步补齐更完整的下载器体验。
 
 ## License
 

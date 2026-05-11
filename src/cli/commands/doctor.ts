@@ -17,6 +17,6 @@ export async function doctorCommand() {
       envCookie: Boolean(envCookie),
       storedCookie: Boolean(storedCookie)
     },
-    warnings: ffmpeg ? [] : ["ffmpeg is required for video/audio merging. Install ffmpeg, set FFMPEG_PATH, use Docker, or place ffmpeg under vendor/ffmpeg. Bilidown GUI is not required."]
+    warnings: ffmpeg ? [] : ["ffmpeg is required for video/audio merging. Install ffmpeg, set FFMPEG_PATH, use Docker, or place ffmpeg under vendor/ffmpeg."]
   };
 }
