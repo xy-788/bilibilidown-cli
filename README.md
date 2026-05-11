@@ -1,81 +1,134 @@
-# bilidown-cli
+# bilibilidown-cli
 
-面向 AI agent 的 B 站媒体归档 CLI。MVP 目标是稳定生成可验证产物：视频、封面、NFO、弹幕，并为关键命令提供 `--json` 输出。
+Agent-friendly Bilibili media archival CLI. It is designed for Codex, Claude Code, Cursor, and other agents that need stable JSON output and verifiable artifacts.
 
-## Quick Start
+The command name is `bdown`.
 
-```powershell
+## Status
+
+This project is in an early MVP stage. The current focus is a single-video workflow:
+
+- environment check
+- Bilibili QR login
+- video metadata
+- cover download
+- NFO generation
+- DASH video/audio download and ffmpeg merge
+- stable JSON success/error output
+- built-in agent Skill
+
+Batch download, multi-part videos, collections, subtitle conversion, queueing, and resume support are planned for later milestones.
+
+## Install
+
+After the package is published to npm:
+
+```bash
+npm install -g bilibilidown-cli
+bdown doctor --json
+```
+
+For local development:
+
+```bash
+npm install
 npm run doctor
 npm run bdown -- info BVxxxx --json
-npm run bdown -- auth login --json
-npm run bdown -- auth poll <qrcodeKey> --json
-npm run bdown -- download BVxxxx -o ./out --with video,cover,nfo --quality 127 --json
 ```
 
-安装为全局命令后可直接使用：
+## Common Commands
 
-```powershell
+```bash
 bdown doctor --json
-bdown info BVxxxx --json
+bdown auth status --json
+bdown auth status --check --json
 bdown auth login --json
 bdown auth poll <qrcodeKey> --json
-bdown download BVxxxx -o ./out --with video,cover,nfo --quality 127 --json
+bdown info <url-or-bv> --json
+bdown cover <url-or-bv> -o ./out --json
+bdown nfo <url-or-bv> -o ./out --json
+bdown download <url-or-bv> -o ./out --with video,cover,nfo --quality 127 --json
 ```
-
-## Commands
-
-- `bdown doctor --json`
-- `bdown auth status --json`
-- `bdown auth status --check --json`
-- `bdown auth login --json`
-- `bdown auth poll <qrcodeKey> --json`
-- `bdown auth set-cookie --from-env BILI_COOKIE --json`
-- `bdown auth clear --json`
-- `bdown info <url-or-bv> --json`
-- `bdown cover <url-or-bv> -o ./out --json`
-- `bdown nfo <url-or-bv> -o ./out --json`
-- `bdown download <url-or-bv> -o ./out --with video,cover,nfo --quality 127 --json`
 
 ## Bilibili Login
 
-CLI 内置 B 站网页扫码登录，不要求用户手工复制 cookie：
+The CLI has a built-in Bilibili QR login flow. It does not require users to copy cookies manually:
 
-```powershell
+```bash
 bdown auth login --json
 bdown auth poll <qrcodeKey> --json
 bdown auth status --check --json
 ```
 
-扫码确认后，CLI 会把必要 cookie 存到本机 `~/.bdown/cookie.txt`，后续 `info` / `download` / 播放流请求会自动带上它，用于获取登录后可访问的更高画质。非交互环境也可以继续使用：
+After QR confirmation, the CLI stores the required cookie locally at `~/.bdown/cookie.txt`. Later `info`, `download`, and playurl requests will use it automatically for logged-in access and higher quality streams.
 
-```powershell
+For non-interactive environments, use:
+
+```bash
 bdown auth set-cookie --from-env BILI_COOKIE --json
 ```
 
-不要把 cookie 粘贴到聊天记录、issue、日志或普通配置文件里。
+Do not paste cookie values into chat, issues, logs, or regular config files.
 
 ## ffmpeg
 
-`bilidown-cli` 不依赖 Bilidown GUI。视频下载合并只需要通用 `ffmpeg`，查找顺序为：
+`bilibilidown-cli` does not depend on Bilidown GUI. Video merging only needs a normal `ffmpeg` installation. Lookup order:
 
 1. `FFMPEG_PATH`
-2. 系统 `PATH` 中的 `ffmpeg`
-3. 项目内 `vendor/ffmpeg/ffmpeg(.exe)`
-4. 项目内 `tools/ffmpeg/ffmpeg(.exe)`
+2. `ffmpeg` from system `PATH`
+3. `vendor/ffmpeg/ffmpeg(.exe)` inside this project
+4. `tools/ffmpeg/ffmpeg(.exe)` inside this project
 
-Docker 镜像会安装 `ffmpeg`。
+The Docker image installs `ffmpeg`.
 
-## MVP Scope
+## JSON Contract
 
-当前骨架聚焦单视频闭环：
+Successful artifact-producing commands return stable JSON:
 
-- 环境检查
-- B 站扫码登录与本机 cookie 存储
-- 视频信息读取
-- 封面下载
-- NFO 生成
-- DASH 音视频下载与 ffmpeg 合并
-- 稳定 JSON 成功/失败输出
-- 内置 Codex Skill
+```json
+{
+  "status": "ok",
+  "provider": "bilibili",
+  "bvid": "BVxxxx",
+  "title": "Video title",
+  "outputDir": "/absolute/output",
+  "artifacts": {
+    "video": "/absolute/output/video.mp4",
+    "cover": "/absolute/output/cover.jpg",
+    "nfo": "/absolute/output/video.nfo",
+    "subtitle": null,
+    "danmaku": null
+  },
+  "warnings": []
+}
+```
 
-批量、多 P、合集、字幕转换、队列和断点续传放在后续里程碑。
+Errors are JSON too:
+
+```json
+{
+  "status": "error",
+  "code": "AUTH_REQUIRED",
+  "message": "This video requires login or higher privileges.",
+  "next": "Run bdown auth login --json."
+}
+```
+
+## Development
+
+```bash
+npm install
+npm test
+npm run build
+```
+
+Before publishing:
+
+```bash
+npm pack --dry-run
+npm publish
+```
+
+## License
+
+MIT

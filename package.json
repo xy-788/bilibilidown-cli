@@ -1,18 +1,37 @@
 {
-  "name": "bilidown-cli",
+  "name": "bilibilidown-cli",
   "version": "0.1.0",
   "description": "Agent-friendly Bilibili media archival CLI with stable JSON output and Bilidown-style artifacts.",
   "type": "module",
   "bin": {
-    "bdown": "./bin/bdown"
+    "bdown": "./dist/bdown.js"
   },
   "scripts": {
     "bdown": "node ./src/cli/index.ts",
     "doctor": "node ./src/cli/index.ts doctor --json",
-    "test": "node tests/unit/run.mjs"
+    "build": "esbuild src/cli/index.ts --bundle --platform=node --format=esm --outfile=dist/bdown.js",
+    "test": "node tests/unit/run.mjs",
+    "prepack": "npm run build"
   },
   "engines": {
     "node": ">=22"
+  },
+  "files": [
+    "dist/",
+    "skills/",
+    "README.md",
+    "LICENSE"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xy-788/bilibilidown-cli.git"
+  },
+  "bugs": {
+    "url": "https://github.com/xy-788/bilibilidown-cli/issues"
+  },
+  "homepage": "https://github.com/xy-788/bilibilidown-cli#readme",
+  "publishConfig": {
+    "access": "public"
   },
   "keywords": [
     "bilibili",
