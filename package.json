@@ -4,7 +4,7 @@
   "description": "Agent-first Bilibili media download and archival CLI with built-in Skill support and stable JSON output.",
   "type": "module",
   "bin": {
-    "bdown": "./dist/bdown.js"
+    "bdown": "dist/bdown.js"
   },
   "scripts": {
     "bdown": "node ./src/cli/index.ts",
