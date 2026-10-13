@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import { parseArgs, flagValue, hasJson } from "./args.ts";
+import { resultExitCode } from "./exit-code.ts";
 import { printJson, printTextLines } from "../core/json-output.ts";
 import { toErrorPayload } from "../core/errors.ts";
 import { doctorCommand } from "./commands/doctor.ts";
@@ -17,6 +18,7 @@ async function main() {
 
   try {
     const result = await dispatch(args);
+    if (resultExitCode(result) !== 0) process.exitCode = 1;
     if (json || typeof result !== "string") printJson(result);
     else printTextLines([result]);
   } catch (error) {

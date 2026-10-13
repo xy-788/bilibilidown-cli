@@ -10,7 +10,7 @@
     "bdown": "node ./src/cli/index.ts",
     "doctor": "node ./src/cli/index.ts doctor --json",
     "build": "esbuild src/cli/index.ts --bundle --platform=node --format=esm --outfile=dist/bdown.js",
-    "test": "node tests/unit/run.mjs",
+    "test": "node tests/unit/run.mjs && node tests/cli/run.mjs",
     "prepack": "npm run build"
   },
   "engines": {

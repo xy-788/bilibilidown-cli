@@ -2,12 +2,29 @@ import assert from "node:assert/strict";
 import { parseBilibiliInput } from "../../src/providers/bilibili/parse-url.ts";
 import { artifactBaseName, sanitizeFileName } from "../../src/core/naming.ts";
 import { selectPages } from "../../src/core/page-selection.ts";
+import { resultExitCode } from "../../src/cli/exit-code.ts";
 
 const cases = [];
 
 function test(name, fn) {
   cases.push([name, fn]);
 }
+
+test("maps returned failures to nonzero exit codes", () => {
+  assert.equal(resultExitCode({ status: "error" }), 1);
+  assert.equal(resultExitCode({ status: "partial", failed: 1 }), 1);
+  assert.equal(resultExitCode({ status: "partial", failed: 3 }), 1);
+});
+
+test("keeps success, login waiting, and results without failed items successful", () => {
+  for (const result of [
+    { status: "ok", warnings: ["optional artifact missing"] },
+    { status: "pending", login: "waiting_scan" },
+    { status: "pending", login: "waiting_confirm" },
+    { status: "partial", failed: 0 },
+    "help text", null, undefined
+  ]) assert.equal(resultExitCode(result), 0);
+});
 
 test("parses direct BV id", () => {
   assert.deepEqual(parseBilibiliInput("BV1xx411c7mD"), { bvid: "BV1xx411c7mD" });

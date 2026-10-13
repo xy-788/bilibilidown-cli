@@ -138,6 +138,13 @@ bdown auth poll <qrcodeKey> --json
 
 这个项目不会自动读取浏览器 cookie，也不建议把 cookie 粘贴到聊天、Issue、日志或普通配置文件里。
 
+## CLI 退出码
+
+- `0`：命令成功；扫码登录的 `pending`（等待扫码、等待确认等）也保持为 `0`。
+- `1`：命令抛出异常、返回 `status: "error"`，或返回 `status: "partial"` 且 `failed > 0`。
+
+退出码规则不依赖 `--json`。批量任务部分失败时仍会完整输出结果，agent 可以读取 `succeeded`、`failed` 和 `results` 判断哪些项目需要重试。
+
 ## 关于 ffmpeg
 
 下载视频时，B 站通常返回分离的音频流和视频流，所以需要通用的 `ffmpeg` 来合并。工具会按下面顺序查找：
